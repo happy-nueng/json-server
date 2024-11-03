@@ -1,0 +1,8 @@
+server_port: 3000
+routes:
+  - method: GET
+    route: /api/users
+    response_file: users.json
+  - method: POST
+    route: /api/users
+    response_file: post_response.json

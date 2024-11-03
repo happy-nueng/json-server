@@ -1,0 +1,14 @@
+@HOST = http://localhost:3000
+###
+GET {{HOST}}/api/users
+###
+GET {{HOST}}/api/users?id=2
+###
+POST {{HOST}}/api/users
+###
+POST {{HOST}}/api/users
+Content-Type: application/json
+
+{
+	"name": "jj"
+}
