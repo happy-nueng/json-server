@@ -40,10 +40,10 @@ func loadResponseFromFile(filename string) (interface{}, error) {
 func main() {
 	app := fiber.New()
 
-	// อ่านไฟล์ config.yml
-	configData, err := os.ReadFile("config.yml")
+	// อ่านไฟล์ config.yaml
+	configData, err := os.ReadFile("config.yaml")
 	if err != nil {
-		log.Fatalf("ไม่สามารถอ่านไฟล์ config.yml ได้: %v", err)
+		log.Fatalf("ไม่สามารถอ่านไฟล์ config.yaml ได้: %v", err)
 	}
 
 	// แปลงข้อมูลจาก YAML เป็นโครงสร้าง Go
@@ -52,7 +52,7 @@ func main() {
 		log.Fatalf("ไม่สามารถแปลง YAML เป็นโครงสร้าง Go ได้: %v", err)
 	}
 
-	// สร้าง route ตามที่กำหนดใน config.yml
+	// สร้าง route ตามที่กำหนดใน config.yaml
 	for _, route := range config.Routes {
 		// โหลด response file
 		responseData, err := loadResponseFromFile(route.ResponseFile)
@@ -68,15 +68,10 @@ func main() {
 				parameters := c.Queries()
 				var response []interface{}
 				if len(parameters) > 0 {
-					// fmt.Println("Parameters:")
-					// for key, value := range parameters {
-					// 	fmt.Printf("Parameter: %s = %v\n", key, value)
-					// }
-					switch responseData.(type) {
+					switch responseData := responseData.(type) {
 					case map[string]interface{}:
 						// ตรวจสอบว่า responseData เป็น map[string]interface{}
-						for key, value := range responseData.(map[string]interface{}) {
-							// fmt.Printf("Parameter: %s = %v\n", key, value)
+						for key, value := range responseData {
 							for qKey, qValue := range parameters {
 								if key == qKey && fmt.Sprint(value) == qValue {
 									response = append(response, value)
@@ -85,12 +80,11 @@ func main() {
 						}
 					case []interface{}:
 						// ตรวจสอบว่า responseData เป็น []interface{}
-						for i, values := range responseData.([]interface{}) {
-							switch values.(type) {
+						for i, values := range responseData {
+							switch values := values.(type) {
 							case map[string]interface{}:
 								// ตรวจสอบว่า value เป็น map[string]interface{}
-								for key, value := range values.(map[string]interface{}) {
-									// fmt.Printf("Parameter: %s = %v\n", key, value)
+								for key, value := range values {
 									for qKey, qValue := range parameters {
 										if key == qKey && fmt.Sprint(value) == qValue {
 											response = append(response, values)
@@ -99,7 +93,7 @@ func main() {
 								}
 							case string:
 								// ตรวจสอบว่า value เป็น string
-								fmt.Printf("Parameter: %s = %v\n", i, values)
+								fmt.Printf("Parameter: %d = %v\n", i, values)
 							}
 						}
 					}
